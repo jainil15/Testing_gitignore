@@ -31,6 +31,12 @@ resource "aws_default_vpc" "default_vpc" {
     Name = "Default"
   }
 }
+
+resource "aws_key_pair" "mykeypair" {
+  key_name   = "mykeypair"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC47EM8owmxDWzZjVtRreGH73gFSiDIRKaKsAxIjJjBcjqLVNVSJl0ToXpLyj3aleYwjEwZq/I5Xy9YF5Md3ZVvsUaAQZnT2iIhbSlgmAYTSI5fReLSn+WNw8jOUq5q9mNvNdDBpg2IRXgsWylYPyl+VtKGc397yfKIqPS1KFnXtq4khlD+7BInWNYNExEh2lc3kpTzPg1M/xkV8PV1SKNBZUoEkYIWGOFzH+EglCmWgAuvRG9L4N7kF57p3Idy6PYPdKR3MtAHUaSsPvJDC2D3tbKonLu5EvP730Oo9r9YHP5JcE8Y6+Hn4vJx+qQpZYxE9QN2UGXeR1TYUS67XCXr jainil@LAPTOP-3C70KJHN"
+}
+
 resource "aws_security_group" "allow_http_and_ssh" {
   name        = "allow_http_and_ssh"
   description = "This security groups allows http and ssh inbound traffic from all sources"
@@ -53,9 +59,10 @@ resource "aws_security_group" "allow_http_and_ssh" {
 }
 
 resource "aws_instance" "app_server" {
-  ami           = "ami-06b72b3b2a773be2b"
-  instance_type = "t2.micro"
-  user_data     = <<EOF
+  ami                    = "ami-06b72b3b2a773be2b"
+  instance_type          = "t2.micro"
+  vpc_security_group_ids = [aws_security_group.allow_http_and_ssh.id]
+  user_data              = <<EOF
 #!bin/bash
 yum update -y
 yum install -y httpd

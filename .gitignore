@@ -34,6 +34,6 @@ override.tf.json
 terraform.rc
 
 # Ignore key files
-.pem
-.pub
+*.pem
+*.pub
 
